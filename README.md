@@ -19,7 +19,7 @@ As the requirements specify using Puppeteer, I will implement the solution accor
 While cost is not typically a major concern when choosing Puppeteer over fetch/axios (since proxy costs are usually the primary expense in web scraping), performance could be a consideration for this use case and should be evaluated based on specific requirements.
 
 ### Implementation Approach
-For these requirements, unless otherwise specified, a serverless implementation would be optimal for development speed, maintenance, and cost efficiency. However, I have chosen to deploy this on an express server for ease of local development and displaying my understanding of creating and API which can be easily run by anyone.
+For these requirements, unless otherwise specified, a serverless implementation would be optimal for development speed, maintenance, and cost efficiency. However, I have chosen to deploy this on an express server for ease of local development and displaying my understanding of creating an API which can be easily run and tested by anyone.
 
 ### No Redis Caching/Database Storage
 Horse racing odds change every few seconds during live events. Caching would provide stale data that could be misleading or financially dangerous for users making betting decisions. Real-time accuracy is more valuable than performance optimization.
