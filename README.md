@@ -13,6 +13,11 @@ The webscraper can be used independently of the API via the CLI as explained in 
 -  CLI interface for standalone scraping on a local machine
 
 ## Assumptions Made and Design Choices
+### Using Puppeteer
+As the requirements of the test say to use puppeteer I will implment in that way but looking at the betting websites it may be better to use pure HTTP requests and HTML parser like cheerio. This would be cheaper and quicker to run that puppeteer although Puppeteer provides flexibility if some of the websites turn out not to be easily scrapable by HTTP requests alone. Cost is not really a problem to use puppeteer rather than fetch or axios as the largest cost on scraping is usually proxies however speed may be for this use case so it would be something to consider.
+
+### Running on a Server
+In practice for these requirements unless clarified would suggest that a serverless implementation would be best for speed of development, maintanence and cost 
 
 ### No Redis Caching/Database Storage
 Horse racing odds change every few seconds during live events. Caching would provide stale data that could be misleading or financially dangerous for users making betting decisions. Real-time accuracy is more valuable than performance optimization.
@@ -24,18 +29,31 @@ Scraping data from a single page with Puppeteer typically completes within 2-5 s
 
 For more complex scraping jobs that require longer processing times (multiple pages, complex interactions, or bulk operations), we could implement an async architecture.
 
-## Deployment Architecture Considerations
-This application is designed assuming deployment on AWS EC2 instances (or simmilar server). However, depending on requirements, a serverless architecture might be more appropriate:
+## Implementation Strategy and Potential Future AWS Architecture
 
-### EC2 (or simmilar server) Deployment (Current Design)
-- **Pros**: Persistent browser instances, predictable performance, easier debugging, completely provider agnostic
-- **Cons**: Fixed capacity, manual scaling, server management overhead
-- **Best for**: Consistent traffic patterns, need for persistent connections
+### Current Implementation: Express.js Server
+This project is implemented as an Express.js server to demonstrate the API functionality and allow for easy local development and testing. The core scraping logic and API design patterns are production-ready and can be easily adapted for serverless deployment.
 
-### Lambda + API Gateway Alternative
-- **Pros**: Auto-scaling, pay-per-request, no server management, built-in rate limiting
-- **Cons**: Cold starts, 15-minute timeout limit, limited memory/CPU options
-- **Best for**: Sporadic traffic, cost optimization, event-driven workloads
+### Recommended Production Architecture: AWS API Gateway + Lambda
+For production deployment, this application would be better suited for a serverless architecture using AWS API Gateway and Lambda functions:
+
+**Benefits of Serverless Approach:**
+- **Auto-scaling**: Automatically handles traffic spikes without manual intervention
+- **Cost Efficiency**: Pay-per-request model, no idle server costs
+- **Simplified Infrastructure**: No server management, patching, or capacity planning
+- **Built-in Monitoring**: CloudWatch integration for logs, metrics, and alerts out-of-the-box
+- **Built-in Security**: API Gateway provides built-in rate limiting and API key management
+- **Easy CI/CD**: Serverless deployment integrates well with IaC and CICD tooling
+
+**Architecture Components:**
+- **API Gateway**: Handle HTTP requests, authentication, rate limiting, and request/response transformation
+- **Lambda Functions**: Execute scraping logic with automatic scaling
+- **CloudWatch**: Centralized logging and monitoring without additional setup
+- **AWS Secrets Manager**: Secure storage for API tokens and sensitive configuration
+
+**Comparison with Traditional Server Deployment:**
+- **Express on EC2**: Requires manual scaling, server management, separate logging/monitoring setup
+- **Serverless**: Cloud-native observability, automatic scaling, reduced operational overhead
 
 
 ## Requirements Provided
