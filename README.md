@@ -14,12 +14,12 @@ The webscraper can be used independently of the API via the CLI as explained in 
 
 ## Assumptions Made and Design Choices
 ### Using Puppeteer
-As the requirements specify using Puppeteer, I will implement the solution accordingly. However, after examining various betting websites, it may be more efficient to use pure HTTP requests with an HTML parser like Cheerio. This approach would be faster and consume fewer resources than Puppeteer, although Puppeteer provides greater flexibility for websites that are not easily scrapable with HTTP requests alone. 
+As the requirements specify using Puppeteer, I will implement the solution accordingly. However, after examining various betting websites, it may be more efficient to use pure HTTP requests with an HTML parser like Cheerio. This approach would be faster and consume fewer resources than Puppeteer, although Puppeteer provides greater flexibility for websites that are not easily scrapable with HTTP requests alone and some of the betting websites I have not looked at may be better with the Puppeteer approach. 
 
 While cost is not typically a major concern when choosing Puppeteer over fetch/axios (since proxy costs are usually the primary expense in web scraping), performance could be a consideration for this use case and should be evaluated based on specific requirements.
 
 ### Implementation Approach
-For these requirements, unless otherwise specified, a serverless implementation would be optimal for development speed, maintenance, and cost efficiency. 
+For these requirements, unless otherwise specified, a serverless implementation would be optimal for development speed, maintenance, and cost efficiency. However, I have chosen to deploy this on an express server for ease of local development and displaying my understanding of creating and API which can be easily run by anyone.
 
 ### No Redis Caching/Database Storage
 Horse racing odds change every few seconds during live events. Caching would provide stale data that could be misleading or financially dangerous for users making betting decisions. Real-time accuracy is more valuable than performance optimization.
