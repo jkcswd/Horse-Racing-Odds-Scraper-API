@@ -1,7 +1,8 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 import logger from '../../../utils/logger';
 
-// To pool a single browser instance across multiple scraping tasks.
+// To pool a single browser instance across multiple scraping tasks. This works for low
+// volume scraping however if we want to scale up we should implement a proper browser pool.
 let browserInstance: Browser | null = null;
 
 export const getBrowser = async (): Promise<Browser> => {
@@ -16,8 +17,14 @@ export const getBrowser = async (): Promise<Browser> => {
         '--disable-accelerated-2d-canvas',
         '--no-first-run',
         '--no-zygote',
-        '--disable-gpu'
-      ]
+        '--disable-gpu',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-background-timer-throttling',
+        '--disable-ipc-flooding-protection'
+      ],
     });
   }
   return browserInstance;
@@ -27,11 +34,24 @@ export const createPage = async (): Promise<Page> => {
   try {
     const browser = await getBrowser();
     const page = await browser.newPage();
-    
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
-    
-    await page.setViewport({ width: 1920, height: 1080 });
-    
+
+    // Modern User-Agent (update Chrome version periodically) rotating user agents probably not needed for our use case but can be used later.
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+
+    // Realistic viewport
+    await page.setViewport({ width: 1366, height: 768 });
+
+    // Block unnecessary resources for better performance, can turn off if it is causing detection issues
+    await page.setRequestInterception(true);
+    page.on('request', (request) => {
+      const resourceType = request.resourceType();
+      if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+        request.abort();
+      } else {
+        request.continue();
+      }
+    });
+
     logger.debug('New page created successfully');
     return page;
   } catch (error) {
