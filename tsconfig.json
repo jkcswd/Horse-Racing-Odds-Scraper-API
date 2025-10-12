@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "lib": ["ES2020"],
+    "lib": ["ES2020", "DOM"], // Added "DOM" to support browser-specific APIs like 'document' and 'window' for when we do page.evaluate
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
