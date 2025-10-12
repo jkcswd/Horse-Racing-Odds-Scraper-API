@@ -19,6 +19,12 @@ The validation on input needed is very minimal in this use case so I did not use
 ### Auth
 We only need a key to verify the ability to access. We don't need granular permissions on the JWT. We could expand later with granular permissions if the requirements change.
 
+## Anti Detection Settings 
+TBD
+
+### Browser Pooling
+I have not implemented proper browser pooling this for this use case but in production we could pool and manage browsers using p-queue or similar if on an EC2. If on AWS lambdas we could share and manage browsers for efficiency although it is also not awful to just spin up a new browser in each lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. However, if given the time and resources pooling the browsers would be optimal.
+
 ### Using Puppeteer 
 As the requirements specify using Puppeteer, I will implement the solution accordingly. However, after examining various betting websites, it may be more efficient to use pure HTTP requests with an HTML parser like Cheerio. This approach would be faster and consume fewer resources than Puppeteer, although Puppeteer provides greater flexibility for websites that are not easily scrapable with HTTP requests alone and some of the betting websites I have not looked at may be better with the Puppeteer approach. 
 
