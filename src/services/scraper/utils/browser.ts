@@ -1,6 +1,7 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 import logger from '../../../utils/logger';
 
+// TODO add browser refresh at interval to avoid memory leaks
 // To pool a single browser instance across multiple scraping tasks. This works for low
 // volume scraping however if we want to scale up we should implement a proper browser pool.
 let browserInstance: Browser | null = null;
@@ -35,11 +36,17 @@ export const createPage = async (): Promise<Page> => {
     const browser = await getBrowser();
     const page = await browser.newPage();
 
-    // Modern User-Agent (update Chrome version periodically) rotating user agents probably not needed for our use case but can be used later.
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-
-    // Realistic viewport
-    await page.setViewport({ width: 1366, height: 768 });
+    await page.emulate({
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      viewport: {
+        width: 1366,
+        height: 768,
+        deviceScaleFactor: 1,
+        isMobile: false,
+        hasTouch: false,
+        isLandscape: true
+      }
+    });
 
     // Block unnecessary resources for better performance, can turn off if it is causing detection issues
     await page.setRequestInterception(true);
