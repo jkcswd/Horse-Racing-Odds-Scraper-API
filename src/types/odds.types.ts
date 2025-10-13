@@ -5,7 +5,6 @@ export interface HorseOdds {
 
 export interface RaceData {
   horsesOddsData: HorseOdds[];
-  timestamp: string;
   eventUrl: string;
   bookmaker: string;
 }
@@ -16,3 +15,5 @@ export interface ScraperResult {
   error?: string;
   timestamp: string;
 }
+
+export type HorseOddsScraperFunc = (url: string) => Promise<RaceData>;
