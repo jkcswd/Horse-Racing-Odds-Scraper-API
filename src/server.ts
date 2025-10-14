@@ -8,10 +8,6 @@ const PORT = process.env['PORT'] || 3000;
 
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
-  if (process.env['NODE_ENV'] !== 'production') {
-    console.log(`Test token: http://localhost:${PORT}/api/test-token`);
-  }
 });
 
 const gracefulShutdown = (signal: string) => {
