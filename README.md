@@ -4,6 +4,9 @@ A Node.js/TypeScript application that scrapes horse racing odds from bookmaker w
 
 The webscraper can be used independently of the API via the CLI as explained in the usage guide.
 
+## Quick Start: How to Run Guide
+TODO
+
 ## Features
 
 -  Scrape horse racing odds from bookmaker websites in real-time
