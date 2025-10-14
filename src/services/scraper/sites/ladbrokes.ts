@@ -69,6 +69,7 @@ const filterValidHorses = (horsesData: { name: string; odds: string }[]) => {
   return horsesData.filter((horse) => {
     const horseName = horse.name.toLowerCase().trim();
     
+    // TODO find out if we need to filter out non-runners and withdrawn or handle these differently.
     if (horseName.includes('non runner') || 
         horseName.includes('withdrawn') ||
         horseName.includes('scratched')) {
