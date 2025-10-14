@@ -20,15 +20,13 @@ The validation on input needed is very minimal in this use case so I did not use
 We only need a key to verify the ability to access. We don't need granular permissions on the JWT. We could expand later with granular permissions if the requirements change.
 
 ## Anti Detection Settings 
-TBD
+I have not applied any anti bot detection configurations (apart from sensible viewport and user agent) as running locally we are not likely to run in to these issues. I have built the code so that it can be extended with proxies or even a hosted browser configured to avoid bot detection. There are further tools we can implement like making the headless browsers behavior more human through natural mouse movements, visiting other pages on the website and interacting with them. However even in production we should not spend time implementing solutions that are not yet needed or likely to be needed to keep in line with principles of YAGNI and KISS.
 
 ### Browser Pooling
 I have not implemented proper browser pooling this for this use case but in production we could pool and manage browsers using p-queue or similar if on an EC2. If on AWS lambdas we could share and manage browsers for efficiency although it is also not awful to just spin up a new browser in each lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. However, if given the time and resources pooling the browsers would be optimal.
 
 ### Using Puppeteer 
-As the requirements specify using Puppeteer, I will implement the solution accordingly. However, after examining various betting websites, it may be more efficient to use pure HTTP requests with an HTML parser like Cheerio. This approach would be faster and consume fewer resources than Puppeteer, although Puppeteer provides greater flexibility for websites that are not easily scrapable with HTTP requests alone and some of the betting websites I have not looked at may be better with the Puppeteer approach. 
-
-While cost is not typically a major concern when choosing Puppeteer over fetch/axios (since proxy costs are usually the primary expense in web scraping), performance could be a consideration for this use case and should be evaluated based on specific requirements.
+As the requirements specify using Puppeteer, I will implement the solution accordingly. However, sometimes it is very easy to implement a curl + HTML parser solution. I have only investigated ladbrookes and that website in particular seems to be easier to scrape using puppeteer although other websites may have more easily accessible APIs which would lend themselves to using fetch in the code.
 
 ### Deployment Architecture Implementation Approach
 For these requirements, unless otherwise specified, a serverless implementation would be optimal for development speed, maintenance, and cost efficiency. However, I have chosen to deploy this on an express server for ease of local development and displaying my understanding of creating an API which can be easily run and tested by anyone.
