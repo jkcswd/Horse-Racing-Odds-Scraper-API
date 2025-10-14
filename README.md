@@ -26,7 +26,11 @@ We only need a key to verify the ability to access. We don't need granular permi
 I have not applied any anti bot detection configurations (apart from sensible viewport and user agent) as running locally we are not likely to run in to these issues. I have built the code so that it can be extended with proxies or even a hosted browser configured to avoid bot detection. There are further tools we can implement like making the headless browsers behavior more human through natural mouse movements, visiting other pages on the website and interacting with them. However even in production we should not spend time implementing solutions that are not yet needed or likely to be needed to keep in line with principles of YAGNI and KISS.
 
 ### Browser Pooling
-I have not implemented proper browser pooling this for this use case but in production we could pool and manage browsers using p-queue or similar if on an EC2. If on AWS lambdas we could share and manage browsers for efficiency although it is also not awful to just spin up a new browser in each lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. However, if given the time and resources pooling the browsers would be optimal.
+I have not implemented proper browser pooling this for this use case but in production we could pool and manage browsers using p-queue or similar if on an EC2. 
+
+If on AWS lambdas we could share and manage browsers for efficiency although it is also not awful to just spin up a new browser in each lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. We could also create a browser pool in an EC2 and connect to it with the lambdas with 'puppeteer.connect' if we want to pool browsers on AWS lambdas.
+
+However, if given the time and resources pooling the browsers would be optimal.
 
 ### Using Puppeteer 
 As the requirements specify using Puppeteer, I will implement the solution accordingly. However, sometimes it is very easy to implement a curl + HTML parser solution. I have only investigated ladbrookes and that website in particular seems to be easier to scrape using puppeteer although other websites may have more easily accessible APIs which would lend themselves to using fetch in the code.
@@ -37,7 +41,7 @@ For these requirements, unless otherwise specified, a serverless implementation 
 ### No Redis Caching/Database Storage
 Horse racing odds change every few seconds during live events. Caching would provide stale data that could be misleading or financially dangerous for users making betting decisions. Real-time accuracy is more valuable than performance optimization.
 
-However, if we wanted to provide analytical insights, we could store the results in a time series database (either in a pure timeseries DB like Cassandra or InfluxDB, or a standard relational DB like PostgreSQL). This would enable analysis of how odds change over time, identify patterns, and provide historical data for analysis.
+However, if we wanted to provide analytical insights, we could store the results in a time series database (either in a pure timeseries DB like Cassandra or InfluxDB, or a standard relational DB like PostgreSQL). This would enable analysis of how odds change over time, identify patterns, and provide historical data for analysis. I would however assume that the team consuming this API would take care of that themselves.
 
 ### Using Symmetric vs Asymmetric JWT Signing
 
