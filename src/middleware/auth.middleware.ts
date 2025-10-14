@@ -14,20 +14,10 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     return;
   }
 
-  const jwtSecret = process.env['JWT_SECRET'];
-  if (!jwtSecret) {
-    console.error('JWT_SECRET is not defined in environment variables');
-    res.status(500).json({
-      success: false,
-      error: 'Server configuration error',
-      message: 'Authentication service is not properly configured'
-    });
-    return;
-  }
-
   try {
     // Just verify token is valid, don't need user data for this API
-    jwt.verify(token, jwtSecret);
+    // JWT_SECRET is validated at server startup, so we know it exists
+    jwt.verify(token, process.env['JWT_SECRET']!);
     next();
   } catch (error) {
     res.status(403).json({
