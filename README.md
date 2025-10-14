@@ -101,6 +101,11 @@ For production deployment, this application would be better suited for a serverl
 - **Express on EC2**: Requires manual scaling, server management, separate logging/monitoring setup
 - **Serverless**: Cloud-native observability, automatic scaling, reduced operational overhead
 
+### Recommended Monitoring Setup
+Have a dashboard with scraper health that then sends alerts to devs when we get errors. This can then be triage and investigated/fixed. TODO: finish this section.
+
+## TODO
+- Write custom errors inside util functions so we can use these to handle retries on likely transient problems vs avoid on ones that are likely broken like selector errors.
 
 ## Requirements Provided
 
