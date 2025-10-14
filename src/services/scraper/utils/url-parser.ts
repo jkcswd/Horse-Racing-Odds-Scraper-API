@@ -1,6 +1,6 @@
 import { scrapeLadbrokes, scrapeBet365} from "../sites";
 import { HorseOddsScraperFunc } from '../../../types/odds.types';
-import logger from "@/utils/logger";
+import logger from "../../../utils/logger";
 
 export const parseUrl = (url: string): string => {
   try {
