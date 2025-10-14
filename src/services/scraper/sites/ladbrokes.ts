@@ -1,20 +1,23 @@
 import { Page } from 'puppeteer';
 import { HorseOddsScraperFunc } from '../../../types/odds.types';
 import { createPage, closePage } from '../utils/browser';
+import { gotoPageWithError, waitForSelectorWithError } from '../utils/scraper-utils';
 import logger from '../../../utils/logger';
 
 
+//TODO add custom errors for if ther are no odds and other cases that we should that are unexpected behaviour.
 export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
   let page: Page | null = null;
   
   try {
     page = await createPage();
-    logger.info('Navigating to Ladbrokes URL', { url });
-
-    await page.goto(url, { waitUntil: 'domcontentloaded' }); // Better performance for most sites.
-
-    // Wait for horse odds cards to load
-    await page.waitForSelector('[data-crlat="oddsPrice"]', { timeout: 10000 });
+    
+    // We go to the page and then wait for any selector that indicates the odds have loaded.
+    // The custom errors these functions throw will be logged and then we can use them for retires and
+    // for monitoring and alerts to triage and fix issues quicker.
+    // dom content loaded is more reliable than waiting for networkidle as some resources may load slowly.
+    await gotoPageWithError(page, url, { waitUntil: 'domcontentloaded' });
+    await waitForSelectorWithError(page, '[data-crlat="oddsPrice"]', 10000);
     
     // Extract horses data from each race card data-crlat used instead of class names which are more likely to change 
     const horsesOddsData = await page.evaluate(() => {
