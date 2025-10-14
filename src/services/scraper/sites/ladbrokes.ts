@@ -1,12 +1,10 @@
 import { Page } from 'puppeteer';
-import { RaceData } from '../../../types/odds.types';
+import { HorseOddsScraperFunc } from '../../../types/odds.types';
 import { createPage, closePage } from '../utils/browser';
 import logger from '../../../utils/logger';
 
 
-// TODO implement filtering out or flagging non-runners like "Non Runner" or "Withdrawn"
-// TODO filter out unnamed favorite placeholders
-export const scrapeLadbrokes = async (url: string): Promise<RaceData> => {
+export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
   let page: Page | null = null;
   
   try {
@@ -41,9 +39,17 @@ export const scrapeLadbrokes = async (url: string): Promise<RaceData> => {
       });
     });
     
+    // Filter out non-runners and unnamed favorites
+    const filteredHorsesData = filterValidHorses(horsesOddsData);
+    
+    logger.info('Horses data extracted and filtered', { 
+      totalHorses: horsesOddsData.length,
+      validHorses: filteredHorsesData.length,
+      filteredOut: horsesOddsData.length - filteredHorsesData.length
+    });
     
     return {
-      horsesOddsData,
+      horsesOddsData: filteredHorsesData,
       eventUrl: url,
       bookmaker: 'ladbrokes'
     };
@@ -56,4 +62,28 @@ export const scrapeLadbrokes = async (url: string): Promise<RaceData> => {
       await closePage(page); // close the page to free up resources since we are pooling a single browser instance
     }
   }
+};
+
+
+const filterValidHorses = (horsesData: { name: string; odds: string }[]) => {
+  return horsesData.filter((horse) => {
+    const horseName = horse.name.toLowerCase().trim();
+    
+    if (horseName.includes('non runner') || 
+        horseName.includes('withdrawn') ||
+        horseName.includes('scratched')) {
+      logger.info('Filtered out non-runner', { horseName: horse.name });
+      return false;
+    }
+    
+    if (horseName.includes('unnamed favourite') ||
+        horseName.includes('unnamed 2nd favourite') ||
+        horseName.includes('unnamed 3rd favourite') ||
+        horseName.match(/unnamed \d+(st|nd|rd|th) favourite?/)) {
+      logger.info('Filtered out unnamed favorite placeholder', { horseName: horse.name });
+      return false;
+    }
+    
+    return true;
+  });
 };
