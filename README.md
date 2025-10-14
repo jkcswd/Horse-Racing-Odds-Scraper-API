@@ -22,7 +22,7 @@ The validation on input needed is very minimal in this use case so I did not use
 ### Auth
 We only need a key to verify the ability to access. We don't need granular permissions on the JWT. We could expand later with granular permissions if the requirements change.
 
-## Anti Detection Settings 
+### Anti Detection Settings 
 I have not applied any anti bot detection configurations (apart from sensible viewport and user agent) as running locally we are not likely to run in to these issues. I have built the code so that it can be extended with proxies or even a hosted browser configured to avoid bot detection. There are further tools we can implement like making the headless browsers behavior more human through natural mouse movements, visiting other pages on the website and interacting with them. However even in production we should not spend time implementing solutions that are not yet needed or likely to be needed to keep in line with principles of YAGNI and KISS.
 
 ### Browser Pooling
