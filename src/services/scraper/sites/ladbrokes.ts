@@ -46,36 +46,35 @@ export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
       await closePage(page); // close the page to free up resources since we are pooling a single browser instance
     }
   }
-
-  async function extractHorseOddsData(page: Page): Promise<HorseOdds[]> {
-    // Extract horses data from each race card data-crlat used instead of class names which are more likely to change 
-    return await page.evaluate(() => {
-      const raceCardElements = document.querySelectorAll('[data-crlat="raceCard.odds"]');
-      if (!raceCardElements || raceCardElements.length === 0) {
-        throw new Error('No race cards found on the page');
-      }
-
-      return Array.from(raceCardElements).map((raceCard) => {
-        const horseNameElement = raceCard.querySelector('[data-crlat="horseName"]');
-        const oddsPriceElement = raceCard.querySelector('[data-crlat="oddsPrice"]');
-
-        const horseName = horseNameElement?.textContent?.trim();
-        const oddsPrice = oddsPriceElement?.textContent?.trim();
-
-        if (!horseName || !oddsPrice) {
-          // This is unexpected behavior as there should be a name and odds on every horse!
-          throw new Error('Failed to extract horse name or odds price');
-        }
-
-        return {
-          name: horseName,
-          odds: oddsPrice
-        };
-      });
-    });
-  }
 };
 
+const extractHorseOddsData = async (page: Page): Promise<HorseOdds[]> => {
+  // Extract horses data from each race card data-crlat used instead of class names which are more likely to change 
+  return await page.evaluate(() => {
+    const raceCardElements = document.querySelectorAll('[data-crlat="raceCard.odds"]');
+    if (!raceCardElements || raceCardElements.length === 0) {
+      throw new Error('No race cards found on the page');
+    }
+
+    return Array.from(raceCardElements).map((raceCard) => {
+      const horseNameElement = raceCard.querySelector('[data-crlat="horseName"]');
+      const oddsPriceElement = raceCard.querySelector('[data-crlat="oddsPrice"]');
+
+      const horseName = horseNameElement?.textContent?.trim();
+      const oddsPrice = oddsPriceElement?.textContent?.trim();
+
+      if (!horseName || !oddsPrice) {
+        // This is unexpected behavior as there should be a name and odds on every horse!
+        throw new Error('Failed to extract horse name or odds price');
+      }
+
+      return {
+        name: horseName,
+        odds: oddsPrice
+      };
+    });
+  });
+}
 
 const filterValidHorses = (horsesData: { name: string; odds: string }[]) => {
   return horsesData.filter((horse) => {
