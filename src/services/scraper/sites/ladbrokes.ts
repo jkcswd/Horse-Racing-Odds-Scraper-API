@@ -45,7 +45,9 @@ export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
       });
     });
     
-    // Filter out non-runners and unnamed favorites
+    // Filter out non-runners and unnamed favorites as these are not actually horses that are going to run in the case of
+    // unnamed favorites these are just placeholders. Non runners and withdrawn are assumed to be filtered out but if we 
+    // want to include them we can add a flag to include them or remove the code if we always want them.
     const filteredHorsesData = filterValidHorses(horsesOddsData);
     
     logger.info('Horses data extracted and filtered', { 
