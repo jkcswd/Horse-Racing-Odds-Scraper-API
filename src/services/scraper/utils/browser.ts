@@ -3,7 +3,8 @@ import logger from '../../../utils/logger';
 
 // TODO add browser refresh at interval to avoid memory leaks
 // To pool a single browser instance across multiple scraping tasks. This works for low
-// volume scraping however if we want to scale up we should implement a proper browser pool.
+// volume scraping however if we want to scale up we should implement a proper browser pool
+// or preferably use a micro service architecture for scaling.
 let browserInstance: Browser | null = null;
 
 export const getBrowser = async (): Promise<Browser> => {

@@ -12,6 +12,7 @@ export const scrapeOdds = async (eventUrl: string): Promise<ScraperResult> => {
     
     // For now, we only support Ladbrokes as a bookmaker.
     // In future, we can extend this with more site-specific scrapers.
+    // This is just an example for how we could could extend in the future.
     const scraperFunction = getSupportedBookmaker(eventUrl);
     const data = await scraperFunction(eventUrl);
 
