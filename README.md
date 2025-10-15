@@ -75,6 +75,10 @@ Scraping data from a single page with Puppeteer typically completes within 2-5 s
 
 For more complex scraping jobs that require longer processing times (multiple pages, complex interactions, or bulk operations), we could implement an async architecture.
 
+### Automated vs Manual QA and Test
+For web scrapers due to the nature of the system interacting with the outside world and constantly changing automated unit tests are not generally that good. Instead very good logging and monitoring systems should be used so that we can find any failures quickly and fix them. However, transforms on the data afterwards can be unit tested.
+TODO expand on this.
+
 ## Implementation Strategy and Potential Future AWS Architecture
 
 ### Current Implementation: Express.js Server
