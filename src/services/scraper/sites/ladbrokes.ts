@@ -4,8 +4,6 @@ import { createPage, closePage } from '../utils/browser';
 import { gotoPageWithError, waitForSelectorWithError } from '../utils/scraper-utils';
 import logger from '../../../utils/logger';
 
-
-//TODO add custom errors for if ther are no odds and other cases that we should that are unexpected behaviour.
 export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
   let page: Page | null = null;
 
