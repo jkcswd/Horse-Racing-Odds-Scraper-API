@@ -20,8 +20,11 @@ export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
     await waitForSelectorWithError(page, '[data-crlat="oddsPrice"]', 10000);
     
     // Extract horses data from each race card data-crlat used instead of class names which are more likely to change 
-    const horsesOddsData = await page.evaluate(() => {
+    const horsesOddsData = await page.evaluate(() => { // page.evaluate is much faster than multiple round trips to browser
       const raceCardElements = document.querySelectorAll('[data-crlat="raceCard.odds"]');
+      if (!raceCardElements || raceCardElements.length === 0) {
+        throw new Error('No race cards found on the page');
+      }
       
       return Array.from(raceCardElements).map((raceCard) => { // as its a nodelist we cant directly map
         const horseNameElement = raceCard.querySelector('[data-crlat="horseName"]');
