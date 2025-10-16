@@ -5,7 +5,97 @@ A Node.js/TypeScript application that scrapes horse racing odds from bookmaker w
 The webscraper can be used independently of the API via the CLI as explained in the usage guide.
 
 ## Quick Start: How to Run Guide
-TODO
+
+### Prerequisites
+
+- **Node.js**: Version 20.0.0 or higher
+- **npm**: Latest version (comes with Node.js)
+- **Git**: For cloning the repository
+
+### 1. Clone and Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/jkcswd/Horse-Racing-Odds-Scraper-API.git
+cd Horse-Racing-Odds-Scraper-API
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+```
+
+### 2. Configure Environment
+
+Edit the `.env` file with your settings:
+
+```bash
+# Required - Generate a secure JWT secret
+JWT_SECRET=your-super-secure-jwt-secret-key-change-this-in-production
+
+# Optional - Customize other settings
+PORT=3000
+NODE_ENV=development
+PUPPETEER_HEADLESS=true
+```
+
+### 3. Build the Project
+
+```bash
+# Compile TypeScript to JavaScript
+npm run build
+```
+
+### 4. Generate a JWT Token (Required for API Access)
+
+```bash
+# Generate a test JWT token for authentication
+npm run generate-token
+```
+
+**Copy the generated token** - you'll need it for API requests.
+
+### 5. Start the Server
+
+```bash
+# Production mode (compiled JavaScript)
+npm start
+
+# OR Development mode (with hot reload)
+npm run dev
+```
+
+The server will start on `http://localhost:3000` (or your configured PORT).
+
+### 6. Test the API
+
+#### Using curl:
+```bash
+# Replace YOUR_JWT_TOKEN with the token from step 4
+curl -X POST "http://localhost:3000/api/odds" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "eventUrl": "https://www.ladbrokes.com.au/sports/racing/horse-racing/..."
+  }'
+```
+
+### 7. CLI Usage (Alternative to API)
+
+You can also use the scraper directly via CLI without running the server:
+
+```bash
+# Scrape odds directly from command line
+npm run cli -- -u "https://www.ladbrokes.com.au/sports/racing/horse-racing/..."
+```
+
+### Testing
+
+```bash
+# Run all tests
+npm test
+```
 
 ## Features
 
