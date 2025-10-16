@@ -54,12 +54,14 @@ const extractHorseOddsData = async (page: Page): Promise<HorseOdds[]> => {
       throw new Error('No race cards found on the page');
     }
 
-    return Array.from(raceCardElements).map((raceCard) => {
+    const horsesIncludingNonRunners = Array.from(raceCardElements).map((raceCard) => {
       const horseNameElement = raceCard.querySelector('[data-crlat="horseName"]');
       const oddsPriceElement = raceCard.querySelector('[data-crlat="oddsPrice"]');
+      const nonRunnerElement = raceCard.querySelector('[data-crlat="nr"]');
 
       const horseName = horseNameElement?.textContent?.trim();
       const oddsPrice = oddsPriceElement?.textContent?.trim();
+      const nonRunner = nonRunnerElement?.textContent?.trim() === 'Non-Runner';
 
       if (!horseName || !oddsPrice) {
         // This is unexpected behavior as there should be a name and odds on every horse!
@@ -67,24 +69,21 @@ const extractHorseOddsData = async (page: Page): Promise<HorseOdds[]> => {
       }
 
       return {
+        nonRunner,
         name: horseName,
         odds: oddsPrice
       };
     });
+
+    const runners = horsesIncludingNonRunners.filter(horse => !horse.nonRunner);
+
+    return runners;
   });
 }
 
-const filterValidHorses = (horsesData: { name: string; odds: string }[]) => {
+export const filterValidHorses = (horsesData: { name: string; odds: string }[]) => {
   return horsesData.filter((horse) => {
     const horseName = horse.name.toLowerCase().trim();
-
-    // TODO find out if we need to filter out non-runners and withdrawn or handle these differently.
-    if (horseName.includes('non runner') ||
-      horseName.includes('withdrawn') ||
-      horseName.includes('scratched')) {
-      logger.info('Filtered out non-runner', { horseName: horse.name });
-      return false;
-    }
 
     if (horseName.includes('unnamed favourite') ||
       horseName.includes('unnamed 2nd favourite') ||
