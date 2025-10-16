@@ -22,16 +22,5 @@ const logger = winston.createLogger({
   ]
 });
 
-// Add file transport to log file if LOG_FILE is specified in case no cloud logging service is used
-if (process.env['LOG_FILE']) {
-  logger.add(new winston.transports.File({ 
-    filename: process.env['LOG_FILE'],
-    format: combine(
-      timestamp(),
-      errors({ stack: true }),
-      json()
-    )
-  }));
-}
 
 export default logger;
