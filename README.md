@@ -16,11 +16,14 @@ TODO
 -  CLI interface for standalone scraping on a local machine
 
 ## Assumptions Made and Design Choices
+### Cloud Provider
+I use AWS services as examples but we can switch these services for equivalents on other providers.
+
 ### Validation
 The validation on input needed is very minimal in this use case so I did not use any libraries but in a production environment with more complex input into or out of the API I would use the Zod validation library.
 
 ### Auth
-We only need a key to verify the ability to access. We don't need granular permissions on the JWT. We could expand later with granular permissions if the requirements change.
+We only need a key to verify the ability to access for now. We don't need granular permissions on the JWT. We could expand later with granular permissions if the requirements change.
 
 ### Anti Detection Settings 
 I have not applied any anti bot detection configurations (apart from sensible viewport and user agent) as running locally we are not likely to run in to these issues. I have built the code so that it can be extended with proxies or even a hosted browser configured to avoid bot detection. There are further tools we can implement like making the headless browsers behavior more human through natural mouse movements, visiting other pages on the website and interacting with them. However even in production we should not spend time implementing solutions that are not yet needed or likely to be needed to keep in line with principles of YAGNI and KISS.
@@ -28,9 +31,9 @@ I have not applied any anti bot detection configurations (apart from sensible vi
 ### Browser Pooling
 I have not implemented proper browser pooling this for this use case but in production we could pool and manage browsers using p-queue or similar if on an EC2. 
 
-If on AWS lambdas we could share and manage browsers for efficiency although it is also not awful to just spin up a new browser in each lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. We could also create a browser pool in an EC2 and connect to it with the lambdas with 'puppeteer.connect' if we want to pool browsers on AWS lambdas.
+However, if on AWS lambdas we could pool and manage browsers separately to the lambdas although it is also not awful to just spin up a new browser in each lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. This would also allow us to easily handle using a new proxy on each connection which is sometimes needed. 
 
-However, if given the time and resources pooling the browsers would be optimal.
+We could also create a browser pool in an EC2 and connect to it with the lambdas with 'puppeteer.connect' if we want to pool browsers on AWS lambdas. I would also need to research this more to understand the feasibility and trade offs of pooling browsers on aws lambda as this may not be a good idea in general as it eats in to the benefits of serverless.
 
 ### Using Puppeteer 
 As the requirements specify using Puppeteer, I will implement the solution accordingly. However, sometimes it is very easy to implement a curl + HTML parser solution. I have only investigated ladbrookes and that website in particular seems to be easier to scrape using puppeteer although other websites may have more easily accessible APIs which would lend themselves to using fetch in the code.
