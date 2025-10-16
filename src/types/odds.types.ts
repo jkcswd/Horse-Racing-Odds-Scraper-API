@@ -3,6 +3,10 @@ export interface HorseOdds {
   odds: string;
 }
 
+export interface HorseOddsWithNonRunner extends HorseOdds {
+  nonRunner?: boolean;
+}
+
 export interface RaceData {
   horsesOddsData: HorseOdds[];
   eventUrl: string;
