@@ -215,5 +215,4 @@ For production deployment, this application would be better suited for a serverl
 - **Serverless**: Cloud-native observability, automatic scaling, reduced operational overhead
 
 ### Recommended Monitoring Setup
-Have a dashboard with scraper health that then sends alerts to devs when we get errors. This can then be triage and investigated/fixed.
- TODO: finish this section.
+Have a dashboard with scraper health that then sends alerts to devs when we get errors that are expected to be non-transient (like the SelectorNotFoundError after page has loaded properly and not thrown a PageLoadError which could be transient) or consitstently getting transient errors on a specific url e.g 100% of errors on ladbrookes are the page not loading this would indicate we are being blocked or the site is down or url structure has changed. This can then be triage and investigated/fixed. Can use cloudwatch only but paid for monitoring services are generally better.
