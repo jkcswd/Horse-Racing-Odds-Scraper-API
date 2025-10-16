@@ -181,6 +181,9 @@ I found 'non-runners' on the Ladbrokes website. A lot of the time these do have 
 ###  Output Validation
 I would talk to the end users of the API and find out further requirements for the odds types and output structure required. For example, do they need odds in a specific format (2/1 or 2:1)? I would then use Zod or similar to validate the output structure and write code to transform data into the required format with unit tests on the transform.
 
+### Logging 
+I implemented basic JSON logging that can be used easily by log ingestion services. I would audit the logging and check what we can improve and if we are missing any important logs if I had more time and I was implementing for production however.
+
 ## Implementation Strategy and Potential Future AWS Architecture
 
 ### Current Implementation: Express.js Server
