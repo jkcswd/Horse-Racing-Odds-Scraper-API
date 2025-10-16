@@ -19,8 +19,5 @@ module.exports = {
     'text',
     'lcov',
     'html'
-  ],
-  moduleNameMapping: {
-    '^@/(.*)$': '<rootDir>/src/$1'
-  }
+  ]
 };
