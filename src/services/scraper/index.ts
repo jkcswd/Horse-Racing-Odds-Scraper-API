@@ -16,6 +16,9 @@ export const scrapeOdds = async (eventUrl: string): Promise<ScraperResult> => {
     const scraperFunction = getSupportedBookmaker(eventUrl);
     const data = await scraperFunction(eventUrl);
 
+    // We can add output validation here if needed in future once requirements are clearer. Currently there is specific
+    // validation for some cases within ladbrokes.ts.
+
     logger.info('Scrape completed successfully', { eventUrl, oddsScraped: data.horsesOddsData });
     return {
       success: true,
