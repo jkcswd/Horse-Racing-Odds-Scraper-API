@@ -42,6 +42,7 @@ app.use('/api', oddsRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
+  logger.error('Route not found', { url: req.originalUrl, method: req.method });
   res.status(404).json({
     success: false,
     error: 'Route not found',

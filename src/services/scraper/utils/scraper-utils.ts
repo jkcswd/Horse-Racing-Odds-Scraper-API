@@ -32,9 +32,9 @@ export const waitForSelectorWithError = async (
   timeout: number = 10000
 ): Promise<void> => {
   try {
-    logger.info('Waiting for selector', { selector, timeout });
+    logger.debug('Waiting for selector', { selector, timeout });
     await page.waitForSelector(selector, { timeout });
-    logger.info('Selector found successfully', { selector });
+    logger.debug('Selector found successfully', { selector });
   } catch (error) {
     logger.error('Selector not found', { selector, timeout, error });
     throw new SelectorNotFoundError(selector, timeout);
@@ -51,7 +51,7 @@ export const gotoPageWithError = async (
   } = { waitUntil: 'domcontentloaded', timeout: 30000 }
 ): Promise<void> => {
   try {
-    logger.info('Navigating to URL', { url, options });
+    logger.debug('Navigating to URL', { url, options });
     
     const response = await page.goto(url, options);
     
@@ -65,7 +65,7 @@ export const gotoPageWithError = async (
       throw new Error(`HTTP ${response.status()}: ${response.statusText()}`);
     }
     
-    logger.info('Page loaded successfully', { 
+    logger.debug('Page loaded successfully', { 
       url, 
       status: response.status(), 
       finalUrl: response.url() 

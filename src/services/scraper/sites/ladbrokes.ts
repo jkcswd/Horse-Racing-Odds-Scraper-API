@@ -22,11 +22,12 @@ export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
     // Filter out unnamed favorites as these are not actually horses that are going to run and are just placeholders.
     const filteredHorsesData = filterOutUnnamedFavourites(horsesOddsData);
 
-    logger.info('Horses data extracted and filtered', {
+    logger.debug('Horses data extracted and filtered', {
       totalHorses: horsesOddsData.length,
       validHorses: filteredHorsesData.length,
       filteredOut: horsesOddsData.length - filteredHorsesData.length
     });
+    logger.debug('Scraping successful', { horsesOddsData });
 
     return {
       horsesOddsData: filteredHorsesData,
