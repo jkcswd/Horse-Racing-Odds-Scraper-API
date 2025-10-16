@@ -92,7 +92,7 @@ export const filterOutUnnamedFavourites = (horsesData: { name: string; odds: str
       horseName.includes('unnamed 2nd favourite') ||
       horseName.includes('unnamed 3rd favourite') ||
       horseName.match(/unnamed \d+(st|nd|rd|th) favourite?/)) {
-      logger.info('Filtered out unnamed favorite placeholder', { horseName: horse.name });
+      logger.debug('Filtered out unnamed favorite placeholder', { horseName: horse.name });
       return false;
     }
 
