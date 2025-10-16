@@ -2,7 +2,7 @@
 
 A Node.js/TypeScript application that scrapes horse racing odds from bookmaker websites using Puppeteer and exposes them via a RESTful API. 
 
-The webscraper can be used independently of the API via the CLI as explained in the usage guide.
+The web scraper can be used independently of the API via the CLI as explained in the usage guide.
 
 ## Quick Start: How to Run Guide
 
@@ -110,25 +110,25 @@ npm test
 I use AWS services as examples but we can switch these services for equivalents on other providers.
 
 ### Validation
-The validation on input needed is very minimal in this use case so I did not use any libraries but in a production environment with more complex input into or out of the API I would use the Zod validation library.
+The validation on input needed is very minimal in this use case, so I did not use any libraries. However, in a production environment with more complex input into or out of the API, I would use the Zod validation library.
 
 ### Auth
 We only need a key to verify the ability to access for now. We don't need granular permissions on the JWT. We could expand later with granular permissions if the requirements change.
 
-I only implemented minimal auth as I do not know the full auth requirements currently. I would also expand the security tests as I only added one type of common attack but would need to research more.
+I only implemented minimal authentication as I do not know the full authentication requirements currently. I would also expand the security tests as I only added one type of common attack but would need to research more.
 
 ### Anti Detection Settings 
-I have not applied any anti bot detection configurations (apart from sensible viewport and user agent) as running locally we are not likely to run in to these issues. I have built the code so that it can be extended with proxies or even a hosted browser configured to avoid bot detection. There are further tools we can implement like making the headless browsers behavior more human through natural mouse movements, visiting other pages on the website and interacting with them. However even in production we should not spend time implementing solutions that are not yet needed or likely to be needed to keep in line with principles of YAGNI and KISS.
+I have not applied any anti-bot detection configurations (apart from sensible viewport and user agent) as running locally we are not likely to run into these issues. I have built the code so that it can be extended with proxies or even a hosted browser configured to avoid bot detection. There are further tools we can implement like making the headless browser's behaviour more human through natural mouse movements, visiting other pages on the website and interacting with them. However, even in production we should not spend time implementing solutions that are not yet needed or likely to be needed to keep in line with principles of YAGNI and KISS.
 
 ### Browser Pooling
-I have not implemented proper browser pooling this for this use case but in production we could pool and manage browsers using p-queue or similar if on an EC2. 
+I have not implemented proper browser pooling for this use case, but in production we could pool and manage browsers using p-queue or similar if on an EC2. 
 
-However, if on AWS lambdas we could pool and manage browsers separately to the lambdas although it is also not awful to just spin up a new browser in each lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. This would also allow us to easily handle using a new proxy on each connection which is sometimes needed. 
+However, if on AWS Lambdas we could pool and manage browsers separately to the Lambdas, although it is also not awful to just spin up a new browser in each Lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. This would also allow us to easily handle using a new proxy on each connection which is sometimes needed. 
 
-We could also create a browser pool in an EC2 and connect to it with the lambdas with 'puppeteer.connect' if we want to pool browsers on AWS lambdas. I would also need to research this more to understand the feasibility and trade offs of pooling browsers on aws lambda as this may not be a good idea in general as it eats in to the benefits of serverless.
+We could also create a browser pool in an EC2 and connect to it with the Lambdas with 'puppeteer.connect' if we want to pool browsers on AWS Lambdas. I would also need to research this more to understand the feasibility and trade-offs of pooling browsers on AWS Lambda as this may not be a good idea in general as it eats into the benefits of serverless.
 
 ### Using Puppeteer 
-As the requirements specify using Puppeteer, I will implement the solution accordingly. However, sometimes it is very easy to implement a curl + HTML parser solution. I have only investigated ladbrookes and that website in particular seems to be easier to scrape using puppeteer although other websites may have more easily accessible APIs which would lend themselves to using fetch in the code.
+As the requirements specify using Puppeteer, I will implement the solution accordingly. However, sometimes it is very easy to implement a curl + HTML parser solution. I have only investigated Ladbrokes and that website in particular seems to be easier to scrape using Puppeteer, although other websites may have more easily accessible APIs which would lend themselves to using fetch in the code.
 
 ### Deployment Architecture Implementation Approach
 For these requirements, unless otherwise specified, a serverless implementation would be optimal for development speed, maintenance, and cost efficiency. However, I have chosen to deploy this on an express server for ease of local development and displaying my understanding of creating an API which can be easily run and tested by anyone.
@@ -136,7 +136,7 @@ For these requirements, unless otherwise specified, a serverless implementation 
 ### No Redis Caching/Database Storage
 Horse racing odds change every few seconds during live events. Caching would provide stale data that could be misleading or financially dangerous for users making betting decisions. Real-time accuracy is more valuable than performance optimization.
 
-However, if we wanted to provide analytical insights, we could store the results in a time series database (either in a pure timeseries DB like Cassandra or InfluxDB, or a standard relational DB like PostgreSQL). This would enable analysis of how odds change over time, identify patterns, and provide historical data for analysis. I would however assume that the team consuming this API would take care of that themselves.
+However, if we wanted to provide analytical insights, we could store the results in a time-series database (either in a pure time-series DB like Cassandra or InfluxDB, or a standard relational DB like PostgreSQL). This would enable analysis of how odds change over time, identify patterns, and provide historical data for analysis. I would, however, assume that the team consuming this API would take care of that themselves.
 
 ### Using Symmetric vs Asymmetric JWT Signing
 
@@ -168,18 +168,18 @@ For the AWS serverless deployment I recommend later, asymmetric signing would be
 ### No Async Job Processing
 Scraping data from a single page with Puppeteer typically completes within 2-5 seconds if we don't need to do extensive navigation or complex operations, which is acceptable for synchronous HTTP responses. The added complexity of job queues, polling endpoints, and state management isn't justified for this response time. 
 
-For more complex scraping jobs that require longer processing times (multiple pages, complex interactions, or bulk operations), we could implement an async architecture.
+For more complex scraping jobs that require longer processing times (multiple pages, complex interactions, or bulk operations), we could implement an asynchronous architecture.
 
 ### Automated vs Manual QA and Test
-For web scrapers due to the nature of the system interacting with the outside world and constantly changing automated unit tests are not generally that good. Instead very good logging and monitoring systems should be used so that we can find any failures quickly and fix them. However, transforms on the data afterwards can be unit tested.
+For web scrapers, due to the nature of the system interacting with the outside world and constantly changing, automated unit tests are not generally that good. Instead, very good logging and monitoring systems should be used so that we can find any failures quickly and fix them. However, transforms on the data afterwards can be unit tested.
 
-For the API I added unit where possible to help me find cases I had not thought about when coding it and to prevent regressions by future contributors and myself as I refactor code.
+For the API, I added unit tests where possible to help me find cases I had not thought about when coding it and to prevent regressions by future contributors and myself as I refactor code.
 
 ### Non Runners
-I found 'non runners' on the ladbrokes website. A lot of the time these do have odds but I would need to verify what the requirements are but I have created code to filter them out. This is signposted and can be removed or adapted to add a flag to the output data structure as I would assume that the consumers of the API might need the non runners odds but also have it flagged that they are non runners.
+I found 'non-runners' on the Ladbrokes website. A lot of the time these do have odds, but I would need to verify what the requirements are. I have created code to filter them out. This is signposted and can be removed or adapted to add a flag to the output data structure as I would assume that the consumers of the API might need the non-runners' odds but also have it flagged that they are non-runners.
 
 ###  Output Validation
-I would talk to the end users of the API and find out further requirements for the odds types and output structure required. For example do they need odds in a specific format (2/1 or 2:1)? I would then use Zod or similar to validate the output structure and write code to transform data into the required format with unit tests on the transform.
+I would talk to the end users of the API and find out further requirements for the odds types and output structure required. For example, do they need odds in a specific format (2/1 or 2:1)? I would then use Zod or similar to validate the output structure and write code to transform data into the required format with unit tests on the transform.
 
 ## Implementation Strategy and Potential Future AWS Architecture
 
@@ -215,4 +215,4 @@ For production deployment, this application would be better suited for a serverl
 - **Serverless**: Cloud-native observability, automatic scaling, reduced operational overhead
 
 ### Recommended Monitoring Setup
-Have a dashboard with scraper health that then sends alerts to devs when we get errors that are expected to be non-transient (like the SelectorNotFoundError after page has loaded properly and not thrown a PageLoadError which could be transient) or consitstently getting transient errors on a specific url e.g 100% of errors on ladbrookes are the page not loading this would indicate we are being blocked or the site is down or url structure has changed. This can then be triage and investigated/fixed. Can use cloudwatch only but paid for monitoring services are generally better.
+Have a dashboard with scraper health that then sends alerts to developers when we get errors that are expected to be non-transient (like the SelectorNotFoundError after page has loaded properly and not thrown a PageLoadError which could be transient) or consistently getting transient errors on a specific URL, e.g. 100% of errors on Ladbrokes are the page not loading, this would indicate we are being blocked or the site is down or URL structure has changed. This can then be triaged and investigated/fixed. Can use CloudWatch only, but paid-for monitoring services are generally better.
