@@ -1,5 +1,5 @@
 import { Page } from 'puppeteer';
-import { HorseOdds, HorseOddsScraperFunc } from '../../../types/odds.types';
+import { HorseOdds, HorseOddsScraperFunc, HorseOddsWithNonRunner } from '../../../types/odds.types';
 import { createPage, closePage } from '../utils/browser';
 import { gotoPageWithError, waitForSelectorWithError } from '../utils/scraper-utils';
 import logger from '../../../utils/logger';
@@ -19,10 +19,8 @@ export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
 
     const horsesOddsData = await extractHorseOddsData(page);
 
-    // Filter out non-runners and unnamed favorites as these are not actually horses that are going to run in the case of
-    // unnamed favorites these are just placeholders. Non runners and withdrawn are assumed to be filtered out but if we 
-    // want to include them we can add a flag to include them or remove the code if we always want them.
-    const filteredHorsesData = filterValidHorses(horsesOddsData);
+    // Filter out unnamed favorites as these are not actually horses that are going to run and are just placeholders.
+    const filteredHorsesData = filterOutUnamedFavourites(horsesOddsData);
 
     logger.info('Horses data extracted and filtered', {
       totalHorses: horsesOddsData.length,
@@ -54,7 +52,7 @@ const extractHorseOddsData = async (page: Page): Promise<HorseOdds[]> => {
       throw new Error('No race cards found on the page');
     }
 
-    const horsesIncludingNonRunners = Array.from(raceCardElements).map((raceCard) => {
+    const horsesIncludingNonRunners: HorseOddsWithNonRunner[] = Array.from(raceCardElements).map((raceCard) => {
       const horseNameElement = raceCard.querySelector('[data-crlat="horseName"]');
       const oddsPriceElement = raceCard.querySelector('[data-crlat="oddsPrice"]');
       const nonRunnerElement = raceCard.querySelector('[data-crlat="nr"]');
@@ -75,13 +73,17 @@ const extractHorseOddsData = async (page: Page): Promise<HorseOdds[]> => {
       };
     });
 
+    // Depending on refined requirements we may want to include non-runners or keep them with a flag.
+    // Here we filter them out and return only runners without the nonRunner property as defined in the requirements
+    // for the output data structure.
     const runners = horsesIncludingNonRunners.filter(horse => !horse.nonRunner);
+    const runnersWithoutNonRunnerProperty = runners.map(({ nonRunner, ...rest }) => rest);
 
-    return runners;
+    return runnersWithoutNonRunnerProperty;
   });
 }
 
-export const filterValidHorses = (horsesData: { name: string; odds: string }[]) => {
+export const filterOutUnamedFavourites = (horsesData: { name: string; odds: string }[]) => {
   return horsesData.filter((horse) => {
     const horseName = horse.name.toLowerCase().trim();
 
