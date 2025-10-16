@@ -1,6 +1,18 @@
 import winston from 'winston';
 
-const { combine, timestamp, errors, json } = winston.format;
+const { combine, timestamp, errors } = winston.format;
+
+// Custom format that separates log metadata from actual data
+const structuredFormat = winston.format.printf(({ timestamp, level, message, service, ...data }) => {
+  const logEntry = {
+    timestamp,
+    level,
+    service,
+    message,
+    ...(Object.keys(data).length > 0 && { data })
+  };
+  return JSON.stringify(logEntry);
+});
 
 // JSON format for structured logging
 const logger = winston.createLogger({
@@ -8,7 +20,7 @@ const logger = winston.createLogger({
   format: combine(
     timestamp(),
     errors({ stack: true }),
-    json()
+    structuredFormat
   ),
   defaultMeta: { service: 'horse-odds-scraper' },
   transports: [
@@ -16,7 +28,7 @@ const logger = winston.createLogger({
       format: combine(
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         errors({ stack: true }),
-        json()
+        structuredFormat
       )
     })
   ]
