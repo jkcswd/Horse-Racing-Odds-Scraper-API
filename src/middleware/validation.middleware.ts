@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 // Validation is very simple so no need for a library like zod
 export const validateScrapeRequest = (req: Request, res: Response, next: NextFunction): void => {
   const { eventUrl } = req.body;
-  
+
   if (!eventUrl) {
     res.status(400).json({
       success: false,
@@ -12,7 +12,7 @@ export const validateScrapeRequest = (req: Request, res: Response, next: NextFun
     });
     return;
   }
-  
+
   if (typeof eventUrl !== 'string') {
     res.status(400).json({
       success: false,
@@ -21,9 +21,12 @@ export const validateScrapeRequest = (req: Request, res: Response, next: NextFun
     });
     return;
   }
-  
+
   try {
-    new URL(eventUrl); // Will throw if not a valid URL
+    const url = new URL(eventUrl); // Will throw if not a valid URL
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('Invalid URL protocol'); // make sure it's http or https betting websiotes will not be using other protocols
+    }
   } catch (error) {
     res.status(400).json({
       success: false,
@@ -32,6 +35,16 @@ export const validateScrapeRequest = (req: Request, res: Response, next: NextFun
     });
     return;
   }
-  
+
+  // check if body is only required field
+  if (Object.keys(req.body).length > 1 && !Object.keys(req.body).every(key => key === 'eventUrl')) {
+    res.status(400).json({
+      success: false,
+      error: 'Unexpected fields in request body',
+      message: 'Only eventUrl is required in the request body'
+    });
+    return;
+  }
+
   next();
 };
