@@ -20,7 +20,7 @@ export const scrapeLadbrokes: HorseOddsScraperFunc = async (url) => {
     const horsesOddsData = await extractHorseOddsData(page);
 
     // Filter out unnamed favorites as these are not actually horses that are going to run and are just placeholders.
-    const filteredHorsesData = filterOutUnamedFavourites(horsesOddsData);
+    const filteredHorsesData = filterOutUnnamedFavourites(horsesOddsData);
 
     logger.info('Horses data extracted and filtered', {
       totalHorses: horsesOddsData.length,
@@ -83,7 +83,7 @@ const extractHorseOddsData = async (page: Page): Promise<HorseOdds[]> => {
   });
 }
 
-export const filterOutUnamedFavourites = (horsesData: { name: string; odds: string }[]) => {
+export const filterOutUnnamedFavourites = (horsesData: { name: string; odds: string }[]) => {
   return horsesData.filter((horse) => {
     const horseName = horse.name.toLowerCase().trim();
 
