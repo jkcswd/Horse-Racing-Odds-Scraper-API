@@ -77,7 +77,14 @@ For more complex scraping jobs that require longer processing times (multiple pa
 
 ### Automated vs Manual QA and Test
 For web scrapers due to the nature of the system interacting with the outside world and constantly changing automated unit tests are not generally that good. Instead very good logging and monitoring systems should be used so that we can find any failures quickly and fix them. However, transforms on the data afterwards can be unit tested.
-TODO expand on this.
+
+For the API I added unit where possible to help me find cases I had not thought about when coding it and to prevent regressions by future contributors and myself as I refactor code.
+
+### Non Runners
+I found 'non runners' on the ladbrokes website. A lot of the time these do have odds but I would need to verify what the requirements are but I have created code to filter them out. This is signposted and can be removed or adapted to add a flag to the output data structure as I would assume that the consumers of the API might need the non runners odds but also have it flagged that they are non runners.
+
+###  Output Validation
+I would talk to the end users of the API and find out further requirements for the odds types and output structure required. For example do they need odds in a specific format (2/1 or 2:1)? I would then use Zod or similar to validate the output structure and write code to transform data into the required format with unit tests on the transform.
 
 ## Implementation Strategy and Potential Future AWS Architecture
 
@@ -114,33 +121,3 @@ For production deployment, this application would be better suited for a serverl
 
 ### Recommended Monitoring Setup
 Have a dashboard with scraper health that then sends alerts to devs when we get errors. This can then be triage and investigated/fixed. TODO: finish this section.
-
-## TODO
-- write testing utils for manual QA and if appropriate auto QA where it makes sense.
-
-## Requirements Provided
-
-**Task 1:**
-Write a Node.js program using Puppeteer to scrape odds for a given horse racing event from a bookmaker site. The script should take in the following parameters:
-- `eventUrl` (string): The URL of the horse racing event page on the bookmaker site.
-
-The script should use Puppeteer to navigate to the event page, scrape the horse name and odds for the event from the bookmaker site, and return them in a JSON format.
-
-**Task 2:**
-Build a RESTful API that exposes an endpoint for scraping odds from a bookmaker site. The API should have the following endpoint:
-- `POST /odds`: Scrape odds for a given horse racing event from a bookmaker site.
-
-The request body should contain the following fields:
-- `eventUrl` (string): The URL of the sports event page on the bookmaker site.
-
-The API should implement authentication and authorization, so that only authenticated users can access the `/odds` endpoint. You can use an API token or any library of your choice.
-
-**Submission Guidelines:**
-- Choose any bookmaker you like. You can get a list of available bookmakers here
-- You should submit your code as a Github repository.
-- You should use TypeScript
-- Include a README file that explains how to run your code and any assumptions you made.
-- Your code should be well-organised and easy to understand.
-- Your code should be tested and free of bugs.
-- Your code should be written in a modular and scalable way.
-- Your code should follow best practices for Node.js and React development, including authentication and authorization best practices, and web scraping best practices.
