@@ -1,10 +1,12 @@
 #!/usr/bin/env ts-node
 
 import { program } from 'commander';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 import { scrapeOdds } from '../src/services/scraper';
 import { closeBrowser } from '../src/services/scraper/utils/browser';
+import logger from '../src/utils/logger';
 
-// Using commander for simple CLI tool creation.
 program
   .name('horse-odds-scraper')
   .description('Scrape horse racing odds from bookmaker websites')
@@ -14,14 +16,35 @@ program
       const result = await scrapeOdds(options.url);
       
       if (result.success && result.data) {
-        console.log(JSON.stringify(result.data, null, 2));
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `scrape-results-${timestamp}.json`;
+        const filepath = join(process.cwd(), filename);
+        
+        const outputData = {
+          timestamp: new Date().toISOString(),
+          data: result.data
+        };
+        
+        writeFileSync(filepath, JSON.stringify(outputData, null, 2), 'utf8');
+        logger.info('Scraping successful! Results written to file', { 
+          filename, 
+          horsesCount: result.data.horsesOddsData?.length || 0,
+          url: options.url 
+        });
       } else {
-        console.error(JSON.stringify({ error: result.error }, null, 2));
+        logger.error('Scraping failed', { 
+          error: result.error, 
+          url: options.url 
+        });
         process.exit(1);
       }
       
     } catch (error) {
-      console.error(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }, null, 2));
+      logger.error('Unexpected error during scraping', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        url: options.url,
+        stack: error instanceof Error ? error.stack : undefined
+      });
       process.exit(1);
     } finally {
       await closeBrowser();
