@@ -86,7 +86,7 @@ curl -X POST "http://localhost:3000/api/odds" \
 You can also use the scraper directly via CLI without running the server:
 
 ```bash
-# Scrape odds directly from command line
+# Scrape odds directly from command line and output to a json file
 npm run cli -- -u "https://www.ladbrokes.com.au/sports/racing/horse-racing/..."
 ```
 
@@ -112,18 +112,28 @@ I use AWS services as examples but we can switch these services for equivalents 
 ### Validation
 The validation on input needed is very minimal in this use case, so I did not use any libraries. However, in a production environment with more complex input into or out of the API, I would use the Zod validation library.
 
+For output validation I would talk to the end users of the API and find out further requirements for the odds types and output structure required. For example, do they need odds in a specific format (2/1 or 2:1)? I would then use Zod or similar to validate the output structure and write code to transform data into the required format with unit tests on the transform.
+
 ### Auth
 We only need a key to verify the ability to access for now. We don't need granular permissions on the JWT. We could expand later with granular permissions if the requirements change.
 
 I only implemented minimal authentication as I do not know the full authentication requirements currently. I would also expand the security tests as I only added one type of common attack but would need to research more.
 
-### Anti Detection Settings 
-I have not applied any anti-bot detection configurations (apart from sensible viewport and user agent) as running locally we are not likely to run into these issues. I have built the code so that it can be extended with proxies or even a hosted browser configured to avoid bot detection. There are further tools we can implement like making the headless browser's behaviour more human through natural mouse movements, visiting other pages on the website and interacting with them. However, even in production we should not spend time implementing solutions that are not yet needed or likely to be needed to keep in line with principles of YAGNI and KISS.
+### Anti-Bot Detection Settings 
+I have not applied any anti-bot detection configurations (apart from sensible viewport and user agent) as running locally we are not likely to run into these issues. I have built the code so that it can be easily extended with proxies or even a hosted browser configured to avoid bot detection. 
+
+**Potential Extensions:**
+- Apply a general proxy to all browser instances 
+- Change the API design to accept proxy configuration per request
+- Make the headless browser's behaviour more human through natural mouse movements
+- Visit other pages on the website and interact with them
+
+However, even in production we should not spend time implementing solutions that are not yet needed or likely to be needed, to keep in line with principles of YAGNI and KISS.
 
 ### Browser Pooling
-I have not implemented proper browser pooling for this use case, but in production we could pool and manage browsers using p-queue or similar if on an EC2. 
+I have not implemented proper browser pooling for this use case, but in production we could pool and manage browsers using p-queue or similar if on an EC2 with an express server like the current design. 
 
-However, if on AWS Lambdas we could pool and manage browsers separately to the Lambdas, although it is also not awful to just spin up a new browser in each Lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies) and the websites themselves are usually the bottleneck for performance. This would also allow us to easily handle using a new proxy on each connection which is sometimes needed. 
+However, if on AWS Lambdas we could pool and manage browsers separately to the Lambdas, although it is also not awful to just spin up a new browser in each Lambda instance as the compute costs are not usually the bottleneck for cost (that is proxies). This would also allow us to easily handle using a new proxy on each connection which is sometimes needed. 
 
 We could also create a browser pool in an EC2 and connect to it with the Lambdas with 'puppeteer.connect' if we want to pool browsers on AWS Lambdas. I would also need to research this more to understand the feasibility and trade-offs of pooling browsers on AWS Lambda as this may not be a good idea in general as it eats into the benefits of serverless.
 
@@ -177,9 +187,6 @@ For the API, I added unit tests where possible to help me find cases I had not t
 
 ### Non Runners
 I found 'non-runners' on the Ladbrokes website. A lot of the time these do have odds, but I would need to verify what the requirements are. I have created code to filter them out. This is signposted and can be removed or adapted to add a flag to the output data structure as I would assume that the consumers of the API might need the non-runners' odds but also have it flagged that they are non-runners.
-
-###  Output Validation
-I would talk to the end users of the API and find out further requirements for the odds types and output structure required. For example, do they need odds in a specific format (2/1 or 2:1)? I would then use Zod or similar to validate the output structure and write code to transform data into the required format with unit tests on the transform.
 
 ### Logging 
 I implemented basic JSON logging that can be used easily by log ingestion services. I would audit the logging and check what we can improve and if we are missing any important logs if I had more time and I was implementing for production however.
