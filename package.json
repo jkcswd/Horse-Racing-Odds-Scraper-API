@@ -11,8 +11,8 @@
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "cli": "ts-node scripts/cli-scraper.ts",
-    "generate-token": "npx tsx scripts/generate-token.ts"
+    "cli": "ts-node src/scripts/cli-scraper.ts",
+    "generate-token": "npx tsx src/scripts/generate-token.ts"
   },
   "author": "James Spencer",
   "dependencies": {

@@ -3,9 +3,9 @@
 import { program } from 'commander';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { scrapeOdds } from '../src/services/scraper';
-import { closeBrowser } from '../src/services/scraper/utils/browser';
-import logger from '../src/utils/logger';
+import { scrapeOdds } from '../services/scraper';
+import { closeBrowser } from '../services/scraper/utils/browser';
+import logger from '../utils/logger';
 
 program
   .name('horse-odds-scraper')
