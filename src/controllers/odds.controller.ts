@@ -20,7 +20,10 @@ export const scrapeHorseOdds = async (req: Request, res: Response<ScrapeOddsResp
     if (result.success && result.data) {
       res.status(200).json({
         success: true,
-        data: result.data,
+        data: {
+          ...result.data,
+          timestamp: result.timestamp
+        },
         message: 'Odds scraped successfully'
       });
     } else {
