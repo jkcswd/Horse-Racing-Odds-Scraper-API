@@ -9,10 +9,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
     "cli": "ts-node src/scripts/cli-scraper.ts",
-    "generate-token": "npx tsx src/scripts/generate-token.ts"
+    "generate-token": "ts-node src/scripts/generate-token.ts"
   },
   "author": "James Spencer",
   "dependencies": {
